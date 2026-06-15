@@ -9,12 +9,15 @@ interface FoodExtra {
   fat: number;
 }
 
+export type RoutineMode = 'home-office' | 'oficina' | 'descanso';
+
 interface TrackerState {
   checked: Record<string, boolean>;
   variants: Record<string, number | null>;
   extras: FoodExtra[];
   suppChecked: Record<string, boolean>;
   theme: 'light' | 'dark';
+  routineMode: RoutineMode;
 }
 
 const initialState: TrackerState = {
@@ -22,7 +25,8 @@ const initialState: TrackerState = {
   variants: {},
   extras: [],
   suppChecked: {},
-  theme: 'dark', // Default to dark as requested
+  theme: 'dark',
+  routineMode: 'home-office',
 };
 
 const trackerSlice = createSlice({
@@ -34,7 +38,6 @@ const trackerSlice = createSlice({
     },
     setVariant: (state, action: PayloadAction<{ mealId: string; variantIndex: number | null }>) => {
       state.variants[action.payload.mealId] = action.payload.variantIndex;
-      // Clear checked variant items for this meal if switching
       Object.keys(state.checked).forEach(key => {
         if (key.startsWith(`${action.payload.mealId}_v`)) {
           delete state.checked[key];
@@ -50,6 +53,9 @@ const trackerSlice = createSlice({
     toggleSupp: (state, action: PayloadAction<{ key: string; checked: boolean }>) => {
       state.suppChecked[action.payload.key] = action.payload.checked;
     },
+    setRoutineMode: (state, action: PayloadAction<RoutineMode>) => {
+      state.routineMode = action.payload;
+    },
     toggleTheme: (state) => {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
@@ -62,5 +68,5 @@ const trackerSlice = createSlice({
   },
 });
 
-export const { toggleItem, setVariant, addExtra, removeExtra, toggleSupp, toggleTheme, resetDay } = trackerSlice.actions;
+export const { toggleItem, setVariant, addExtra, removeExtra, toggleSupp, setRoutineMode, toggleTheme, resetDay } = trackerSlice.actions;
 export default trackerSlice.reducer;

@@ -3,13 +3,13 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { TrackerView } from './features/tracker/TrackerView';
 import { SuppView } from './features/tracker/SuppView';
-import { MenuView, VariantsView, CheatView } from './features/tracker/StaticViews';
+import { RoutineView, MenuView, VariantsView, CheatView } from './features/tracker/StaticViews';
 import { toggleTheme } from './features/tracker/trackerSlice';
 import type { RootState } from './app/store';
 import { Sun, Moon } from 'lucide-react';
 import './App.css';
 
-type Tab = 'tracker' | 'supps' | 'menu' | 'variantes' | 'cheat';
+type Tab = 'tracker' | 'rutina' | 'supps' | 'menu' | 'variantes' | 'cheat';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('tracker');
@@ -36,10 +36,16 @@ function App() {
               📊 Tracker
             </button>
             <button 
+              className={`tab ${activeTab === 'rutina' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('rutina')}
+            >
+              📅 Rutina
+            </button>
+            <button 
               className={`tab ${activeTab === 'supps' ? 'active' : ''}`} 
               onClick={() => setActiveTab('supps')}
             >
-              💊 Suplementos
+              💊 Supps
             </button>
             <button 
               className={`tab ${activeTab === 'menu' ? 'active' : ''}`} 
@@ -51,7 +57,7 @@ function App() {
               className={`tab ${activeTab === 'variantes' ? 'active' : ''}`} 
               onClick={() => setActiveTab('variantes')}
             >
-              🔄 Variantes
+              🔄 Var
             </button>
             <button 
               className={`tab ${activeTab === 'cheat' ? 'active' : ''}`} 
@@ -72,6 +78,7 @@ function App() {
 
         <div className="content">
           {activeTab === 'tracker' && <TrackerView />}
+          {activeTab === 'rutina' && <RoutineView />}
           {activeTab === 'supps' && <SuppView />}
           {activeTab === 'menu' && <MenuView />}
           {activeTab === 'variantes' && <VariantsView />}

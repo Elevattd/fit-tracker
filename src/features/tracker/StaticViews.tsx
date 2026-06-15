@@ -1,8 +1,114 @@
 
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../../app/store';
+import { setRoutineMode, type RoutineMode } from './trackerSlice';
+import { Coffee, Bike, Briefcase, Home, Moon, Dumbbell, Utensils, Zap } from 'lucide-react';
+
+export const RoutineView = () => {
+  const dispatch = useDispatch();
+  const routineMode = useSelector((state: RootState) => state.tracker.routineMode);
+
+  const schedule: Record<RoutineMode, { time: string; activity: string; note?: string; icon: any }[]> = {
+    'home-office': [
+      { time: '09:00', activity: 'Despertar', icon: Moon },
+      { time: '09:30', activity: 'Desayuno', note: 'Tranquilo, inicio HO', icon: Coffee },
+      { time: '12:30', activity: 'Almuerzo', icon: Utensils },
+      { time: '18:00', activity: 'Merienda', note: 'Pre-gym', icon: Zap },
+      { time: '20:00', activity: 'Gimnasio', icon: Dumbbell },
+      { time: '22:15', activity: 'Cena', icon: Utensils },
+      { time: '00:00', activity: 'Dormir', note: 'LoL permitido', icon: Moon },
+    ],
+    'oficina': [
+      { time: '07:30', activity: 'Despertar', note: 'Más temprano', icon: Moon },
+      { time: '07:45', activity: 'Cardio bici', note: 'En ayunas (45 min)', icon: Bike },
+      { time: '08:30', activity: 'Desayuno', note: 'Post-cardio, antes de salir', icon: Coffee },
+      { time: '08:45', activity: 'Salida a oficina', note: 'Llevar vianda', icon: Briefcase },
+      { time: '12:30', activity: 'Almuerzo', note: 'Vianda en oficina', icon: Utensils },
+      { time: '19:00', activity: 'Vuelta + Merienda', note: 'Merienda rápida', icon: Home },
+      { time: '20:30', activity: 'Gimnasio', note: 'Horario ajustado', icon: Dumbbell },
+      { time: '22:45', activity: 'Cena', icon: Utensils },
+      { time: '23:30', activity: 'Dormir', note: 'Sin LoL hoy', icon: Moon },
+    ],
+    'descanso': [
+      { time: '09:30', activity: 'Despertar', icon: Moon },
+      { time: '10:00', activity: 'Desayuno', icon: Coffee },
+      { time: '13:00', activity: 'Almuerzo', icon: Utensils },
+      { time: '18:00', activity: 'Merienda', icon: Coffee },
+      { time: '21:00', activity: 'Cena', note: 'Más temprano', icon: Utensils },
+      { time: '23:00', activity: 'Dormir', note: 'Descanso total', icon: Moon },
+    ]
+  };
+
+  const currentSchedule = schedule[routineMode] || schedule['home-office'];
+
+  return (
+    <div id="routine" className="section active">
+      <div className="card" style={{ marginBottom: '16px' }}>
+        <div className="custom-title">Tipo de día</div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          <button 
+            className={`btn-add ${routineMode === 'home-office' ? '' : 'inactive'}`} 
+            style={{ flex: 1, opacity: routineMode === 'home-office' ? 1 : 0.5 }}
+            onClick={() => dispatch(setRoutineMode('home-office'))}
+          >
+            🏠 HO
+          </button>
+          <button 
+            className={`btn-add ${routineMode === 'oficina' ? '' : 'inactive'}`} 
+            style={{ flex: 1, opacity: routineMode === 'oficina' ? 1 : 0.5 }}
+            onClick={() => dispatch(setRoutineMode('oficina'))}
+          >
+            🏢 Oficina
+          </button>
+          <button 
+            className={`btn-add ${routineMode === 'descanso' ? '' : 'inactive'}`} 
+            style={{ flex: 1, opacity: routineMode === 'descanso' ? 1 : 0.5 }}
+            onClick={() => dispatch(setRoutineMode('descanso'))}
+          >
+            🛌 Descanso
+          </button>
+        </div>
+      </div>
+
+      <div className="timeline">
+        {currentSchedule.map((item, i) => (
+          <div key={i} className="card" style={{ display: 'flex', gap: '14px', alignItems: 'center', padding: '12px 16px' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '10px', 
+              background: 'var(--color-background-secondary)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: 'var(--color-text-info)'
+            }}>
+              <item.icon size={20} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="meal-name" style={{ fontSize: '15px' }}>{item.activity}</div>
+                <div className="time-label" style={{ marginBottom: 0 }}>{item.time}</div>
+              </div>
+              {item.note && <div style={{ fontSize: '12px', color: 'var(--color-text-tertiary)', marginTop: '2px' }}>{item.note}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="warn-box" style={{ marginTop: '10px' }}>
+        {routineMode === 'oficina' ? '💡 El día anterior a oficina nunca se juega LoL hasta tarde.' : 
+         routineMode === 'home-office' ? '🎮 Hoy se puede jugar LoL un rato.' : 
+         '🔋 Aprovechá para recuperar energía.'}
+      </div>
+    </div>
+  );
+};
+
 export const MenuView = () => (
   <div id="menu" className="section active">
     <div className="card">
-      <div className="time-label">7:45 · DESAYUNO</div>
+      <div className="time-label">DESAYUNO</div>
       <div className="card-title">Pan lactal + huevos <span className="badge b-kcal">~720 kcal</span></div>
       <div className="ingredient"><span className="ing-name">Pan lactal casero</span><span>80g</span></div>
       <div className="ingredient"><span className="ing-name">Mermelada diet Hemeth</span><span>40g</span></div>
@@ -15,7 +121,7 @@ export const MenuView = () => (
       <div className="row"><span className="rl">Grasas</span><span className="rv">~28g</span></div>
     </div>
     <div className="card">
-      <div className="time-label">12:30 · ALMUERZO</div>
+      <div className="time-label">ALMUERZO</div>
       <div className="card-title">Pollo + arroz + brócoli <span className="badge b-kcal">~490 kcal</span></div>
       <div className="ingredient"><span className="ing-name">Pechuga de pollo hervida</span><span>200g cocida</span></div>
       <div className="ingredient"><span className="ing-name">Arroz en crudo</span><span>80g</span></div>
@@ -26,7 +132,7 @@ export const MenuView = () => (
       <div className="row"><span className="rl">Grasas</span><span className="rv">~5g</span></div>
     </div>
     <div className="card">
-      <div className="time-label">18:00 · MERIENDA</div>
+      <div className="time-label">MERIENDA</div>
       <div className="card-title">Pan lactal + huevos <span className="badge b-kcal">~660 kcal</span></div>
       <div className="ingredient"><span className="ing-name">Pan lactal casero</span><span>80g</span></div>
       <div className="ingredient"><span className="ing-name">Mermelada diet Hemeth</span><span>40g</span></div>
@@ -39,7 +145,7 @@ export const MenuView = () => (
       <div className="row"><span className="rl">Grasas</span><span className="rv">~20g</span></div>
     </div>
     <div className="card">
-      <div className="time-label">22:15 · CENA</div>
+      <div className="time-label">CENA</div>
       <div className="card-title">Pollo + arroz + brócoli <span className="badge b-kcal">~490 kcal</span></div>
       <div className="ingredient"><span className="ing-name">Pechuga de pollo hervida</span><span>200g cocida</span></div>
       <div className="ingredient"><span className="ing-name">Arroz en crudo</span><span>80g</span></div>
