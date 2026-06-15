@@ -183,7 +183,7 @@ export const MenuView = () => (
       <div className="time-label">DESAYUNO</div>
       <div className="card-title">Pan lactal + huevos <span className="badge b-kcal">~720 kcal</span></div>
       <div className="ingredient"><span className="ing-name">Pan lactal casero</span><span>80g</span></div>
-      <div className="ingredient"><span className="ing-name">Mermelada diet Hemeth</span><span>40g</span></div>
+      <div className="ingredient"><span className="ing-name">Mermelada</span><span>40g</span></div>
       <div className="ingredient"><span className="ing-name">Manteca de maní</span><span>15g</span></div>
       <div className="ingredient"><span className="ing-name">Huevos enteros</span><span>4 unid</span></div>
       <div className="ingredient"><span className="ing-name">Claras</span><span>4 unid</span></div>
@@ -207,7 +207,7 @@ export const MenuView = () => (
       <div className="time-label">MERIENDA</div>
       <div className="card-title">Pan lactal + huevos <span className="badge b-kcal">~660 kcal</span></div>
       <div className="ingredient"><span className="ing-name">Pan lactal casero</span><span>80g</span></div>
-      <div className="ingredient"><span className="ing-name">Mermelada diet Hemeth</span><span>40g</span></div>
+      <div className="ingredient"><span className="ing-name">Mermelada</span><span>40g</span></div>
       <div className="ingredient"><span className="ing-name">Huevos enteros</span><span>4 unid</span></div>
       <div className="ingredient"><span className="ing-name">Claras</span><span>4 unid</span></div>
       <div className="tip" style={{ marginTop: '10px', marginBottom: 0 }}>⚡ Sin manteca de maní — pre-gym, digestión rápida.</div>

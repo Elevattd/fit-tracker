@@ -25,7 +25,7 @@ export const BASE_MEALS: Meal[] = [
     time: '7:45',
     items: [
       { name: 'Pan lactal casero', qty: '80g', kcal: 212, pro: 7, ch: 38, fat: 3 },
-      { name: 'Mermelada diet Hemeth', qty: '40g', kcal: 32, pro: 0, ch: 8, fat: 0 },
+      { name: 'Mermelada', qty: '40g', kcal: 32, pro: 0, ch: 8, fat: 0 },
       { name: 'Manteca de maní', qty: '15g', kcal: 90, pro: 4, ch: 3, fat: 8 },
       { name: 'Huevos enteros', qty: '4 unid', kcal: 280, pro: 24, ch: 2, fat: 20 },
       { name: 'Claras', qty: '4 unid', kcal: 68, pro: 14, ch: 1, fat: 0 },
@@ -51,7 +51,7 @@ export const BASE_MEALS: Meal[] = [
     time: '18:00',
     items: [
       { name: 'Pan lactal casero', qty: '80g', kcal: 212, pro: 7, ch: 38, fat: 3 },
-      { name: 'Mermelada diet Hemeth', qty: '40g', kcal: 32, pro: 0, ch: 8, fat: 0 },
+      { name: 'Mermelada', qty: '40g', kcal: 32, pro: 0, ch: 8, fat: 0 },
       { name: 'Huevos enteros', qty: '4 unid', kcal: 280, pro: 24, ch: 2, fat: 20 },
       { name: 'Claras', qty: '4 unid', kcal: 68, pro: 14, ch: 1, fat: 0 },
     ]
