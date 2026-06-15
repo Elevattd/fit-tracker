@@ -4,12 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TrackerView } from './features/tracker/TrackerView';
 import { SuppView } from './features/tracker/SuppView';
 import { RoutineView, MenuView, VariantsView, CheatView } from './features/tracker/StaticViews';
+import { ShoppingListView } from './features/tracker/ShoppingListView';
 import { toggleTheme } from './features/tracker/trackerSlice';
 import type { RootState } from './app/store';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, ShoppingCart } from 'lucide-react';
 import './App.css';
 
-type Tab = 'tracker' | 'rutina' | 'supps' | 'menu' | 'variantes' | 'cheat';
+type Tab = 'tracker' | 'rutina' | 'supps' | 'compras' | 'menu' | 'variantes' | 'cheat';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('tracker');
@@ -48,6 +49,12 @@ function App() {
               💊 Supps
             </button>
             <button 
+              className={`tab ${activeTab === 'compras' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('compras')}
+            >
+              🛒 Compras
+            </button>
+            <button 
               className={`tab ${activeTab === 'menu' ? 'active' : ''}`} 
               onClick={() => setActiveTab('menu')}
             >
@@ -80,6 +87,7 @@ function App() {
           {activeTab === 'tracker' && <TrackerView />}
           {activeTab === 'rutina' && <RoutineView />}
           {activeTab === 'supps' && <SuppView />}
+          {activeTab === 'compras' && <ShoppingListView />}
           {activeTab === 'menu' && <MenuView />}
           {activeTab === 'variantes' && <VariantsView />}
           {activeTab === 'cheat' && <CheatView />}
