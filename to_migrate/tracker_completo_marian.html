@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans, system-ui); padding: 1rem 0; font-size: 14px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; padding-bottom: 1.25rem; }
+.tab { padding: 7px 14px; border-radius: 8px; border: 0.5px solid var(--color-border-secondary, #ddd); background: transparent; cursor: pointer; font-size: 12px; color: var(--color-text-secondary, #666); font-family: inherit; transition: all .15s; }
+.tab.active { background: var(--color-background-info, #e8f0fe); color: var(--color-text-info, #1a56db); border-color: var(--color-border-info, #1a56db); font-weight: 500; }
+.section { display: none; }
+.section.active { display: block; }
+.card { background: var(--color-background-primary, #fff); border: 0.5px solid var(--color-border-tertiary, #eee); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary, #111); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+.row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary, #eee); font-size: 13px; }
+.row:last-child { border-bottom: none; }
+.rl { color: var(--color-text-secondary, #666); }
+.rv { font-weight: 500; color: var(--color-text-primary, #111); }
+.badge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 6px; white-space: nowrap; }
+.b-kcal { background: var(--color-background-secondary, #f5f5f5); color: var(--color-text-secondary, #666); }
+.b-ok { background: var(--color-background-success, #e6f4ea); color: var(--color-text-success, #1a7f37); }
+.b-warn { background: var(--color-background-warning, #fff8e1); color: var(--color-text-warning, #b45309); }
+.b-info { background: var(--color-background-info, #e8f0fe); color: var(--color-text-info, #1a56db); }
+.b-var { background: var(--color-background-success, #e6f4ea); color: var(--color-text-success, #1a7f37); }
+.b-supp { background: #f3e8ff; color: #7c3aed; }
+.tip { background: var(--color-background-info, #e8f0fe); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--color-text-info, #1a56db); margin-bottom: 10px; line-height: 1.5; }
+.warn-box { background: var(--color-background-warning, #fff8e1); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--color-text-warning, #b45309); margin-bottom: 10px; line-height: 1.5; }
+.ingredient { font-size: 13px; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary, #eee); display: flex; justify-content: space-between; }
+.ingredient:last-child { border-bottom: none; }
+.ing-name { color: var(--color-text-secondary, #666); }
+.divider { height: 0.5px; background: var(--color-border-tertiary, #eee); margin: 12px 0; }
+.time-label { font-size: 12px; color: var(--color-text-tertiary, #999); font-weight: 500; margin-bottom: 6px; letter-spacing: .03em; }
+.macro-bar-wrap { height: 8px; background: var(--color-background-secondary, #f5f5f5); border-radius: 4px; margin-top: 6px; overflow: hidden; }
+.macro-bar { height: 100%; border-radius: 4px; transition: width .4s ease; }
+.macro-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+.macro-box { background: var(--color-background-secondary, #f5f5f5); border-radius: 10px; padding: 10px; text-align: center; }
+.macro-label { font-size: 11px; color: var(--color-text-tertiary, #999); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 4px; }
+.macro-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary, #111); }
+.macro-target { font-size: 11px; color: var(--color-text-tertiary, #999); margin-top: 2px; }
+.meal-block { border: 0.5px solid var(--color-border-tertiary, #eee); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; background: var(--color-background-primary, #fff); }
+.meal-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.meal-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary, #111); }
+.meal-toggle { font-size: 18px; color: var(--color-text-tertiary, #999); line-height: 1; }
+.meal-items { display: none; margin-top: 10px; }
+.meal-items.open { display: block; }
+.food-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary, #eee); }
+.food-row:last-child { border-bottom: none; }
+.food-check { width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-text-info, #1a56db); flex-shrink: 0; }
+.food-name { flex: 1; font-size: 13px; color: var(--color-text-secondary, #666); }
+.food-qty { font-size: 12px; color: var(--color-text-tertiary, #999); white-space: nowrap; }
+.food-macros { font-size: 11px; color: var(--color-text-tertiary, #999); white-space: nowrap; }
+.custom-section { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--color-border-tertiary, #eee); }
+.custom-title { font-size: 12px; color: var(--color-text-tertiary, #999); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .03em; }
+.custom-form { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.custom-input { flex: 1; min-width: 70px; padding: 6px 10px; border: 0.5px solid var(--color-border-secondary, #ddd); border-radius: 6px; font-size: 12px; font-family: inherit; background: var(--color-background-primary, #fff); color: var(--color-text-primary, #111); }
+.custom-input::placeholder { color: var(--color-text-tertiary, #aaa); }
+.btn-add { padding: 6px 14px; background: var(--color-background-info, #e8f0fe); color: var(--color-text-info, #1a56db); border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.btn-remove { background: none; border: none; color: var(--color-text-danger, #dc2626); cursor: pointer; font-size: 14px; padding: 0 4px; }
+.btn-reset { padding: 6px 14px; background: var(--color-background-danger, #fee2e2); color: var(--color-text-danger, #dc2626); border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+/* SUPLEMENTOS */
+.supp-block { border: 0.5px solid var(--color-border-tertiary, #eee); border-radius: 12px; margin-bottom: 8px; background: var(--color-background-primary, #fff); overflow: hidden; }
+.supp-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; }
+.supp-time { font-size: 11px; color: var(--color-text-tertiary, #999); font-weight: 500; letter-spacing:.03em; }
+.supp-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary, #111); }
+.supp-body { display: none; padding: 0 14px 12px; }
+.supp-body.open { display: block; }
+.supp-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary, #eee); }
+.supp-row:last-child { border-bottom: none; }
+.supp-check { width: 18px; height: 18px; cursor: pointer; accent-color: #7c3aed; flex-shrink: 0; }
+.supp-name { flex: 1; font-size: 13px; color: var(--color-text-secondary, #666); }
+.supp-dose { font-size: 12px; color: #7c3aed; white-space: nowrap; }
+.supp-why { font-size: 11px; color: var(--color-text-tertiary, #999); }
+.supp-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.supp-pct { font-size: 13px; color: var(--color-text-secondary, #666); }
+.supp-pct-val { font-weight: 500; color: #7c3aed; }
+.caff-box { background: #fff8e1; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #b45309; margin-bottom: 12px; }
+</style>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('tracker',this)">📊 Tracker</button>
+  <button class="tab" onclick="showTab('supps',this)">💊 Suplementos</button>
+  <button class="tab" onclick="showTab('menu',this)">🍽 Menú</button>
+  <button class="tab" onclick="showTab('variantes',this)">🔄 Variantes</button>
+  <button class="tab" onclick="showTab('cheat',this)">🍕 Cheat</button>
+</div>
+
+<!-- TRACKER -->
+<div id="tracker" class="section active">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div style="font-size:13px;color:var(--color-text-secondary);" id="fecha-label"></div>
+    <button class="btn-reset" onclick="resetDay()">Resetear día</button>
+  </div>
+  <div class="macro-grid">
+    <div class="macro-box">
+      <div class="macro-label">Calorías</div>
+      <div class="macro-val" id="t-kcal">0</div>
+      <div class="macro-target">/ 2600</div>
+      <div class="macro-bar-wrap"><div class="macro-bar" id="bar-kcal" style="background:#378ADD;width:0%"></div></div>
+    </div>
+    <div class="macro-box">
+      <div class="macro-label">Proteína</div>
+      <div class="macro-val" id="t-pro">0g</div>
+      <div class="macro-target">/ 210g</div>
+      <div class="macro-bar-wrap"><div class="macro-bar" id="bar-pro" style="background:#1D9E75;width:0%"></div></div>
+    </div>
+    <div class="macro-box">
+      <div class="macro-label">Carbos</div>
+      <div class="macro-val" id="t-ch">0g</div>
+      <div class="macro-target">/ 280g</div>
+      <div class="macro-bar-wrap"><div class="macro-bar" id="bar-ch" style="background:#BA7517;width:0%"></div></div>
+    </div>
+    <div class="macro-box">
+      <div class="macro-label">Grasas</div>
+      <div class="macro-val" id="t-fat">0g</div>
+      <div class="macro-target">/ 71g</div>
+      <div class="macro-bar-wrap"><div class="macro-bar" id="bar-fat" style="background:#7C3AED;width:0%"></div></div>
+    </div>
+  </div>
+  <div id="meals-container"></div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Agregar alimento extra</div>
+    <div class="custom-form">
+      <input class="custom-input" id="extra-name" placeholder="Nombre" style="flex:2;min-width:110px;">
+      <input class="custom-input" id="extra-kcal" placeholder="kcal" type="number" min="0">
+      <input class="custom-input" id="extra-pro" placeholder="prot g" type="number" min="0">
+      <input class="custom-input" id="extra-ch" placeholder="CH g" type="number" min="0">
+      <input class="custom-input" id="extra-fat" placeholder="grasas g" type="number" min="0">
+      <button class="btn-add" onclick="addExtra()">+ Agregar</button>
+    </div>
+    <div id="extras-list"></div>
+  </div>
+</div>
+
+<!-- SUPLEMENTOS -->
+<div id="supps" class="section">
+  <div class="caff-box" id="caff-warn">
+    ☕ Cafeína del día: <strong id="caff-total">0mg</strong> / 300mg máximo
+    <div class="macro-bar-wrap" style="margin-top:6px;"><div class="macro-bar" id="bar-caff" style="background:#BA7517;width:0%"></div></div>
+  </div>
+
+  <div id="supps-container"></div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">Resumen del stack</div>
+    <div class="row"><span class="rl">Suplementos tomados</span><span class="rv" id="supp-count">0 / 0</span></div>
+    <div class="row"><span class="rl">Cafeína acumulada</span><span class="rv" id="supp-caff-summary">0mg</span></div>
+  </div>
+</div>
+
+<!-- MENÚ -->
+<div id="menu" class="section">
+  <div class="card">
+    <div class="time-label">7:45 · DESAYUNO</div>
+    <div class="card-title">Pan lactal + huevos <span class="badge b-kcal">~720 kcal</span></div>
+    <div class="ingredient"><span class="ing-name">Pan lactal casero</span><span>80g</span></div>
+    <div class="ingredient"><span class="ing-name">Mermelada diet Hemeth</span><span>40g</span></div>
+    <div class="ingredient"><span class="ing-name">Manteca de maní</span><span>15g</span></div>
+    <div class="ingredient"><span class="ing-name">Huevos enteros</span><span>4 unid</span></div>
+    <div class="ingredient"><span class="ing-name">Claras</span><span>4 unid</span></div>
+    <div class="divider"></div>
+    <div class="row"><span class="rl">Proteína</span><span class="rv">~52g</span></div>
+    <div class="row"><span class="rl">Carbos</span><span class="rv">~65g</span></div>
+    <div class="row"><span class="rl">Grasas</span><span class="rv">~28g</span></div>
+  </div>
+  <div class="card">
+    <div class="time-label">12:30 · ALMUERZO</div>
+    <div class="card-title">Pollo + arroz + brócoli <span class="badge b-kcal">~490 kcal</span></div>
+    <div class="ingredient"><span class="ing-name">Pechuga de pollo hervida</span><span>200g cocida</span></div>
+    <div class="ingredient"><span class="ing-name">Arroz en crudo</span><span>80g</span></div>
+    <div class="ingredient"><span class="ing-name">Brócoli</span><span>150g</span></div>
+    <div class="divider"></div>
+    <div class="row"><span class="rl">Proteína</span><span class="rv">~52g</span></div>
+    <div class="row"><span class="rl">Carbos</span><span class="rv">~68g</span></div>
+    <div class="row"><span class="rl">Grasas</span><span class="rv">~5g</span></div>
+  </div>
+  <div class="card">
+    <div class="time-label">18:00 · MERIENDA</div>
+    <div class="card-title">Pan lactal + huevos <span class="badge b-kcal">~660 kcal</span></div>
+    <div class="ingredient"><span class="ing-name">Pan lactal casero</span><span>80g</span></div>
+    <div class="ingredient"><span class="ing-name">Mermelada diet Hemeth</span><span>40g</span></div>
+    <div class="ingredient"><span class="ing-name">Huevos enteros</span><span>4 unid</span></div>
+    <div class="ingredient"><span class="ing-name">Claras</span><span>4 unid</span></div>
+    <div class="tip" style="margin-top:10px;margin-bottom:0">⚡ Sin manteca de maní — pre-gym, digestión rápida.</div>
+    <div class="divider"></div>
+    <div class="row"><span class="rl">Proteína</span><span class="rv">~50g</span></div>
+    <div class="row"><span class="rl">Carbos</span><span class="rv">~62g</span></div>
+    <div class="row"><span class="rl">Grasas</span><span class="rv">~20g</span></div>
+  </div>
+  <div class="card">
+    <div class="time-label">22:15 · CENA</div>
+    <div class="card-title">Pollo + arroz + brócoli <span class="badge b-kcal">~490 kcal</span></div>
+    <div class="ingredient"><span class="ing-name">Pechuga de pollo hervida</span><span>200g cocida</span></div>
+    <div class="ingredient"><span class="ing-name">Arroz en crudo</span><span>80g</span></div>
+    <div class="ingredient"><span class="ing-name">Brócoli</span><span>150g</span></div>
+    <div class="divider"></div>
+    <div class="row"><span class="rl">Proteína</span><span class="rv">~52g</span></div>
+    <div class="row"><span class="rl">Carbos</span><span class="rv">~68g</span></div>
+    <div class="row"><span class="rl">Grasas</span><span class="rv">~5g</span></div>
+  </div>
+</div>
+
+<!-- VARIANTES -->
+<div id="variantes" class="section">
+  <div class="tip">Intercambios 1:1 — mismos macros aproximados, distinto alimento.</div>
+  <div class="card">
+    <div class="card-title">Arroz → Papa <span class="badge b-var">intercambio</span></div>
+    <div class="ingredient"><span class="ing-name">En vez de 80g arroz crudo</span><span>250g papa hervida</span></div>
+    <div class="row"><span class="rl">Mejor para</span><span class="rv">Post-gym (IG alto)</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Arroz → Batata <span class="badge b-var">intercambio</span></div>
+    <div class="ingredient"><span class="ing-name">En vez de 80g arroz crudo</span><span>220g batata hervida</span></div>
+    <div class="row"><span class="rl">Mejor para</span><span class="rv">Almuerzo (IG medio)</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Reglas</div>
+    <div class="row"><span class="rl">Brócoli</span><span class="rv">Siempre fijo</span></div>
+    <div class="row"><span class="rl">Cena post-gym</span><span class="rv">Papa preferida</span></div>
+  </div>
+</div>
+
+<!-- CHEAT -->
+<div id="cheat" class="section">
+  <div class="warn-box">El cheat meal no es un día libre — es una cena + postre. El resto del día comés normal.</div>
+  <div class="card">
+    <div class="card-title">Reglas <span class="badge b-warn">1x semana</span></div>
+    <div class="row"><span class="rl">Desayuno / Almuerzo / Merienda</span><span class="rv">Normal</span></div>
+    <div class="row"><span class="rl">Cena + postre</span><span class="rv">Lo que tengas ganas</span></div>
+    <div class="row"><span class="rl">Alcohol</span><span class="rv">1–2 copas máximo</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Por qué funciona</div>
+    <div class="row"><span class="rl">Calorías extra</span><span class="rv">+600–900 esa noche</span></div>
+    <div class="row"><span class="rl">Impacto semanal</span><span class="rv">~100 kcal/día → irrelevante</span></div>
+    <div class="row"><span class="rl">Beneficio</span><span class="rv">Adherencia + sube leptina</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Evitar</div>
+    <div class="row"><span class="rl">Alcohol en cantidad</span><span class="rv">Bloquea síntesis proteica 24–36hs</span></div>
+    <div class="row"><span class="rl">Compensar al día siguiente</span><span class="rv">No — seguís normal</span></div>
+  </div>
+</div>
+
+<script>
+const TARGETS = { kcal:2600, pro:210, ch:280, fat:71 };
+
+const BASE_MEALS = [
+  { id:'desayuno', name:'Desayuno', time:'7:45', items:[
+    {name:'Pan lactal casero',qty:'80g',kcal:212,pro:7,ch:38,fat:3},
+    {name:'Mermelada diet Hemeth',qty:'40g',kcal:32,pro:0,ch:8,fat:0},
+    {name:'Manteca de maní',qty:'15g',kcal:90,pro:4,ch:3,fat:8},
+    {name:'Huevos enteros',qty:'4 unid',kcal:280,pro:24,ch:2,fat:20},
+    {name:'Claras',qty:'4 unid',kcal:68,pro:14,ch:1,fat:0},
+  ]},
+  { id:'almuerzo', name:'Almuerzo', time:'12:30', items:[
+    {name:'Pechuga de pollo hervida',qty:'200g cocida',kcal:220,pro:46,ch:0,fat:4},
+    {name:'Arroz',qty:'80g crudo',kcal:284,pro:6,ch:62,fat:1},
+    {name:'Brócoli',qty:'150g',kcal:51,pro:4,ch:10,fat:1},
+  ], variants:[
+    {name:'Papa hervida (en vez de arroz)',qty:'250g',kcal:215,pro:5,ch:50,fat:0},
+    {name:'Batata hervida (en vez de arroz)',qty:'220g',kcal:198,pro:4,ch:46,fat:0},
+  ]},
+  { id:'merienda', name:'Merienda', time:'18:00', items:[
+    {name:'Pan lactal casero',qty:'80g',kcal:212,pro:7,ch:38,fat:3},
+    {name:'Mermelada diet Hemeth',qty:'40g',kcal:32,pro:0,ch:8,fat:0},
+    {name:'Huevos enteros',qty:'4 unid',kcal:280,pro:24,ch:2,fat:20},
+    {name:'Claras',qty:'4 unid',kcal:68,pro:14,ch:1,fat:0},
+  ]},
+  { id:'cena', name:'Cena', time:'22:15', items:[
+    {name:'Pechuga de pollo hervida',qty:'200g cocida',kcal:220,pro:46,ch:0,fat:4},
+    {name:'Arroz',qty:'80g crudo',kcal:284,pro:6,ch:62,fat:1},
+    {name:'Brócoli',qty:'150g',kcal:51,pro:4,ch:10,fat:1},
+  ], variants:[
+    {name:'Papa hervida (en vez de arroz)',qty:'250g',kcal:215,pro:5,ch:50,fat:0},
+    {name:'Batata hervida (en vez de arroz)',qty:'220g',kcal:198,pro:4,ch:46,fat:0},
+  ]},
+];
+
+const SUPP_SCHEDULE = [
+  { time:'6:30 · AL DESPERTAR', title:'Despertar', items:[
+    {name:'Vaso de agua',dose:'500ml',why:'Hidratación base',caff:0},
+  ]},
+  { time:'6:45 · PRE-CARDIO', title:'Pre-cardio ayunas', items:[
+    {name:'Café expresso',dose:'1 taza (~90mg caff)',why:'Energía cardio en ayunas',caff:90},
+  ]},
+  { time:'7:45 · CON DESAYUNO', title:'Con el desayuno', items:[
+    {name:'Multivitamínico (Gravitón Plus)',dose:'1 comprimido',why:'Base vitamínica y mineral',caff:0},
+    {name:'Vitamina D3',dose:'2000 UI',why:'El multi solo trae 200 UI — insuficiente',caff:0},
+    {name:'Omega 3',dose:'2–3g (EPA+DHA)',why:'Antiinflamatorio, muñeca post-cirugía',caff:0},
+    {name:'Vitamina C',dose:'500mg',why:'El multi trae 120mg — necesitás 500mg para el colágeno',caff:0},
+    {name:'Creatina',dose:'5g',why:'Cualquier momento, con comida es perfecto',caff:0},
+  ]},
+  { time:'19:30 · PRE-GYM', title:'Pre-entreno (30 min antes)', items:[
+    {name:'RAW Essential Pre Workout',dose:'1 scoop (13.3g)',why:'200mg caff + citrulina + beta alanina + tirosina',caff:200},
+    {name:'Colágeno',dose:'10g',why:'30–60 min antes del estímulo mecánico → muñeca',caff:0},
+  ]},
+  { time:'22:15 · CON CENA', title:'Con la cena', items:[
+    {name:'Magnesio glicinato',dose:'300–400mg',why:'Sueño + recuperación muscular',caff:0},
+    {name:'Ashwagandha KSM-66',dose:'300–600mg',why:'Baja cortisol, mejora sueño y testosterona',caff:0},
+  ]},
+  { time:'23:00 · AL ACOSTARSE', title:'Al acostarse', items:[
+    {name:'Melatonina',dose:'0.5mg (NO más)',why:'Con más te despertás aturdido',caff:0},
+  ]},
+];
+
+const state = { checked:{}, variants:{}, extras:[], suppChecked:{} };
+
+function buildMeals() {
+  const c = document.getElementById('meals-container');
+  c.innerHTML = '';
+  BASE_MEALS.forEach(meal => {
+    const div = document.createElement('div');
+    div.className = 'meal-block';
+    div.innerHTML = `
+      <div class="meal-header" onclick="toggleMeal('items-${meal.id}','toggle-${meal.id}')">
+        <div>
+          <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px;">${meal.time}</div>
+          <div class="meal-name">${meal.name}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge b-kcal" id="meal-kcal-${meal.id}">${getMealCheckedKcal(meal)} / ${getMealKcal(meal)} kcal</span>
+          <span class="meal-toggle" id="toggle-${meal.id}">▸</span>
+        </div>
+      </div>
+      <div class="meal-items" id="items-${meal.id}">
+        ${buildItems(meal)}
+        ${meal.variants ? buildVariants(meal) : ''}
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function buildItems(meal) {
+  return meal.items.map((item,i) => {
+    if ((meal.id==='almuerzo'||meal.id==='cena') && i===1 && state.variants[meal.id]!=null) return '';
+    const key=`${meal.id}_${i}`, chk=state.checked[key]||false;
+    return `<div class="food-row">
+      <input type="checkbox" class="food-check" ${chk?'checked':''} onchange="toggleItem('${meal.id}',${i},this.checked)">
+      <span class="food-name" style="${chk?'text-decoration:line-through;opacity:.5':''}">${item.name}</span>
+      <span class="food-qty">${item.qty}</span>
+      <span class="food-macros">${item.pro}p·${item.ch}c·${item.fat}f</span>
+    </div>`;
+  }).join('');
+}
+
+function buildVariants(meal) {
+  const av = state.variants[meal.id];
+  return `<div class="custom-section">
+    <div class="custom-title">Variante de carbohidrato</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn-add" style="${av==null?'':'opacity:.5'}" onclick="setVariant('${meal.id}',null)">Arroz</button>
+      ${meal.variants.map((v,vi)=>`<button class="btn-add" style="${av===vi?'':'opacity:.5'}" onclick="setVariant('${meal.id}',${vi})">${vi===0?'Papa':'Batata'}</button>`).join('')}
+    </div>
+    ${av!=null?`<div class="food-row">
+      <input type="checkbox" class="food-check" ${state.checked[`${meal.id}_v${av}`]?'checked':''} onchange="toggleVariantItem('${meal.id}',${av},this.checked)" style="accent-color:#1D9E75">
+      <span class="food-name" style="${state.checked[`${meal.id}_v${av}`]?'text-decoration:line-through;opacity:.5':''}">${meal.variants[av].name}</span>
+      <span class="food-qty">${meal.variants[av].qty}</span>
+      <span class="food-macros">${meal.variants[av].pro}p·${meal.variants[av].ch}c·${meal.variants[av].fat}f</span>
+    </div>`:''}
+  </div>`;
+}
+
+function buildSupps() {
+  const c = document.getElementById('supps-container');
+  c.innerHTML = '';
+  let totalItems = 0;
+  SUPP_SCHEDULE.forEach((block, bi) => {
+    const div = document.createElement('div');
+    div.className = 'supp-block';
+    const checkedCount = block.items.filter((_,ii) => state.suppChecked[`${bi}_${ii}`]).length;
+    div.innerHTML = `
+      <div class="supp-header" onclick="toggleSupp('supp-body-${bi}','supp-tog-${bi}')">
+        <div>
+          <div class="supp-time">${block.time}</div>
+          <div class="supp-title">${block.title}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge b-supp">${checkedCount}/${block.items.length}</span>
+          <span class="meal-toggle" id="supp-tog-${bi}">▸</span>
+        </div>
+      </div>
+      <div class="supp-body" id="supp-body-${bi}">
+        ${block.items.map((s,ii)=>{
+          const key=`${bi}_${ii}`, chk=state.suppChecked[key]||false;
+          return `<div class="supp-row">
+            <input type="checkbox" class="supp-check" ${chk?'checked':''} onchange="toggleSupp2(${bi},${ii},this.checked)">
+            <div style="flex:1">
+              <div class="supp-name" style="${chk?'text-decoration:line-through;opacity:.5':''}">${s.name}</div>
+              <div class="supp-why">${s.why}</div>
+            </div>
+            <div class="supp-dose">${s.dose}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    totalItems += block.items.length;
+    c.appendChild(div);
+  });
+  updateCaff();
+  updateSuppCount(totalItems);
+}
+
+function toggleSupp(bodyId, togId) {
+  const el = document.getElementById(bodyId);
+  const tog = document.getElementById(togId);
+  const isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  tog.textContent = isOpen ? '▸' : '▾';
+}
+
+function toggleSupp2(bi, ii, checked) {
+  state.suppChecked[`${bi}_${ii}`] = checked;
+  buildSupps();
+}
+
+function updateCaff() {
+  let caff = 0;
+  SUPP_SCHEDULE.forEach((block, bi) => {
+    block.items.forEach((s, ii) => {
+      if (state.suppChecked[`${bi}_${ii}`]) caff += s.caff;
+    });
+  });
+  document.getElementById('caff-total').textContent = caff + 'mg';
+  document.getElementById('supp-caff-summary').textContent = caff + 'mg';
+  const pct = Math.min(100, Math.round(caff/300*100));
+  const bar = document.getElementById('bar-caff');
+  bar.style.width = pct + '%';
+  bar.style.background = pct >= 90 ? '#dc2626' : pct >= 70 ? '#BA7517' : '#1D9E75';
+}
+
+function updateSuppCount(total) {
+  const taken = Object.values(state.suppChecked).filter(Boolean).length;
+  document.getElementById('supp-count').textContent = `${taken} / ${total}`;
+}
+
+function toggleMeal(itemsId, togId) {
+  const el = document.getElementById(itemsId);
+  const tog = document.getElementById(togId);
+  const isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  tog.textContent = isOpen ? '▸' : '▾';
+}
+
+function toggleItem(mealId, idx, checked) {
+  state.checked[`${mealId}_${idx}`] = checked;
+  updateTotals(); updateMealBadge(mealId);
+}
+function toggleVariantItem(mealId, vi, checked) {
+  state.checked[`${mealId}_v${vi}`] = checked;
+  updateTotals(); updateMealBadge(mealId);
+}
+function setVariant(mealId, vi) {
+  state.variants[mealId] = vi;
+  BASE_MEALS.find(m=>m.id===mealId).variants?.forEach((_,i)=>{ delete state.checked[`${mealId}_v${i}`]; });
+  buildMeals();
+  document.getElementById('items-'+mealId).classList.add('open');
+  document.getElementById('toggle-'+mealId).textContent = '▾';
+  updateTotals();
+}
+
+function getMealKcal(meal) {
+  let t=0; const av=state.variants[meal.id];
+  meal.items.forEach((item,i)=>{ if((meal.id==='almuerzo'||meal.id==='cena')&&i===1&&av!=null) return; t+=item.kcal; });
+  if(av!=null&&meal.variants) t+=meal.variants[av].kcal;
+  return t;
+}
+function getMealCheckedKcal(meal) {
+  let t=0; const av=state.variants[meal.id];
+  meal.items.forEach((item,i)=>{ if((meal.id==='almuerzo'||meal.id==='cena')&&i===1&&av!=null) return; if(state.checked[`${meal.id}_${i}`]) t+=item.kcal; });
+  if(av!=null&&meal.variants&&state.checked[`${meal.id}_v${av}`]) t+=meal.variants[av].kcal;
+  return t;
+}
+function updateMealBadge(mealId) {
+  const meal=BASE_MEALS.find(m=>m.id===mealId);
+  const el=document.getElementById('meal-kcal-'+mealId);
+  if(el) el.textContent=`${getMealCheckedKcal(meal)} / ${getMealKcal(meal)} kcal`;
+}
+function updateTotals() {
+  let kcal=0,pro=0,ch=0,fat=0;
+  BASE_MEALS.forEach(meal=>{
+    const av=state.variants[meal.id];
+    meal.items.forEach((item,i)=>{ if((meal.id==='almuerzo'||meal.id==='cena')&&i===1&&av!=null) return; if(state.checked[`${meal.id}_${i}`]){kcal+=item.kcal;pro+=item.pro;ch+=item.ch;fat+=item.fat;} });
+    if(av!=null&&meal.variants&&state.checked[`${meal.id}_v${av}`]){const v=meal.variants[av];kcal+=v.kcal;pro+=v.pro;ch+=v.ch;fat+=v.fat;}
+  });
+  state.extras.forEach(e=>{kcal+=e.kcal;pro+=e.pro;ch+=e.ch;fat+=e.fat;});
+  document.getElementById('t-kcal').textContent=kcal;
+  document.getElementById('t-pro').textContent=pro+'g';
+  document.getElementById('t-ch').textContent=ch+'g';
+  document.getElementById('t-fat').textContent=fat+'g';
+  setBar('bar-kcal',kcal,TARGETS.kcal);
+  setBar('bar-pro',pro,TARGETS.pro);
+  setBar('bar-ch',ch,TARGETS.ch);
+  setBar('bar-fat',fat,TARGETS.fat);
+}
+function setBar(id,val,target) {
+  const pct=Math.min(100,Math.round(val/target*100));
+  const el=document.getElementById(id);
+  el.style.width=pct+'%';
+  el.style.background=pct>=95?'#1D9E75':pct>=70?'#BA7517':'#378ADD';
+}
+function addExtra() {
+  const name=document.getElementById('extra-name').value.trim()||'Extra';
+  const kcal=parseFloat(document.getElementById('extra-kcal').value)||0;
+  const pro=parseFloat(document.getElementById('extra-pro').value)||0;
+  const ch=parseFloat(document.getElementById('extra-ch').value)||0;
+  const fat=parseFloat(document.getElementById('extra-fat').value)||0;
+  state.extras.push({name,kcal,pro,ch,fat});
+  ['extra-name','extra-kcal','extra-pro','extra-ch','extra-fat'].forEach(id=>document.getElementById(id).value='');
+  renderExtras(); updateTotals();
+}
+function removeExtra(i) { state.extras.splice(i,1); renderExtras(); updateTotals(); }
+function renderExtras() {
+  const el=document.getElementById('extras-list');
+  if(!state.extras.length){el.innerHTML='';return;}
+  el.innerHTML=state.extras.map((e,i)=>`<div class="food-row">
+    <span class="food-name">${e.name}</span>
+    <span class="food-macros">${e.kcal}kcal·${e.pro}p·${e.ch}c·${e.fat}f</span>
+    <button class="btn-remove" onclick="removeExtra(${i})">✕</button>
+  </div>`).join('');
+}
+function resetDay() {
+  Object.keys(state.checked).forEach(k=>delete state.checked[k]);
+  Object.keys(state.variants).forEach(k=>delete state.variants[k]);
+  Object.keys(state.suppChecked).forEach(k=>delete state.suppChecked[k]);
+  state.extras=[];
+  buildMeals(); buildSupps(); renderExtras(); updateTotals();
+}
+function showTab(id,btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+// Init
+document.getElementById('fecha-label').textContent = new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+buildMeals(); buildSupps(); updateTotals();
+</script>
