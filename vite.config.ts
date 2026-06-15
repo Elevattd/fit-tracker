@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: '/fit-tracker/', // cambiá esto por el nombre exacto de tu repo
   plugins: [
     react(),
     VitePWA({
