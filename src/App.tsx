@@ -7,7 +7,7 @@ import { RoutineView, MenuView, VariantsView, CheatView } from './features/track
 import { ShoppingListView } from './features/tracker/ShoppingListView';
 import { toggleTheme } from './features/tracker/trackerSlice';
 import type { RootState } from './app/store';
-import { Sun, Moon, ShoppingCart } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import './App.css';
 
 type Tab = 'tracker' | 'rutina' | 'supps' | 'compras' | 'menu' | 'variantes' | 'cheat';
