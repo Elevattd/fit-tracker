@@ -17,7 +17,7 @@ interface TrackerState {
   extras: FoodExtra[];
   suppChecked: Record<string, boolean>;
   theme: 'light' | 'dark';
-  routineMode: RoutineMode;
+  routineMode: RoutineMode | 'auto';
 }
 
 const initialState: TrackerState = {
@@ -26,7 +26,7 @@ const initialState: TrackerState = {
   extras: [],
   suppChecked: {},
   theme: 'dark',
-  routineMode: 'home-office',
+  routineMode: 'auto',
 };
 
 const trackerSlice = createSlice({
@@ -53,7 +53,7 @@ const trackerSlice = createSlice({
     toggleSupp: (state, action: PayloadAction<{ key: string; checked: boolean }>) => {
       state.suppChecked[action.payload.key] = action.payload.checked;
     },
-    setRoutineMode: (state, action: PayloadAction<RoutineMode>) => {
+    setRoutineMode: (state, action: PayloadAction<RoutineMode | 'auto'>) => {
       state.routineMode = action.payload;
     },
     toggleTheme: (state) => {
