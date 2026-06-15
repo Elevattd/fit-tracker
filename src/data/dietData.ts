@@ -108,7 +108,6 @@ export const SUPP_SCHEDULE: SuppBlock[] = [
   {
     time: '19:30 · PRE-GYM', title: 'Pre-entreno (30 min antes)', items: [
       { name: 'RAW Essential Pre Workout', dose: '1 scoop (13.3g)', why: '200mg caff + citrulina + beta alanina + tirosina', caff: 200 },
-      { name: 'Colágeno', dose: '10g', why: '30–60 min antes del estímulo mecánico → muñeca', caff: 0 },
     ]
   },
   {

@@ -48,7 +48,6 @@ export const ShoppingListView = () => {
 
   const supplementItems = [
     { name: 'Creatina', qty: `${(5 * daysInMonth)}g`, detail: '5g diarios', icon: Pill },
-    { name: 'Colágeno', qty: `${(10 * daysInMonth)}g`, detail: '10g diarios (Pre-gym)', icon: Pill },
     { name: 'Pre-Workout', qty: `${daysInMonth} scoops`, detail: 'RAW Essential (13.3g c/u)', icon: Pill },
     { name: 'Multivitamínico', qty: `${daysInMonth} comp.`, detail: 'Gravitón Plus', icon: Pill },
     { name: 'Omega 3', qty: `${daysInMonth * 2} caps`, detail: '2 caps diarias (mínimo)', icon: Pill },
