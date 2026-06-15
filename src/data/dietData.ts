@@ -116,9 +116,4 @@ export const SUPP_SCHEDULE: SuppBlock[] = [
       { name: 'Ashwagandha KSM-66', dose: '300–600mg', why: 'Baja cortisol, mejora sueño y testosterona', caff: 0 },
     ]
   },
-  {
-    time: '23:00 · AL ACOSTARSE', title: 'Al acostarse', items: [
-      { name: 'Melatonina', dose: '0.5mg (NO más)', why: 'Con más te despertás aturdido', caff: 0 },
-    ]
-  },
 ];

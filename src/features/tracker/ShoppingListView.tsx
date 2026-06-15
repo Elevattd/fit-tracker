@@ -39,7 +39,7 @@ export const ShoppingListView = () => {
     { name: 'Huevos', qty: `${maples} maples`, detail: `${totalEggs} unidades para ${monthName}`, icon: Package },
     { name: 'Pechuga de Pollo', qty: `${totalChickenKg} kg`, detail: 'Peso en crudo (500g/día)', icon: Package },
     { name: 'Arroz', qty: `${riceBags} kg`, detail: `Bolsas de 1kg (${(totalRiceGrams/1000).toFixed(1)}kg exactos)`, icon: Package },
-    { name: 'Mermelada Diet (400g)', qty: `${jamJars} frascos`, detail: 'Mermelada Hemeth', icon: Package },
+    { name: 'Mermelada Diet (400g)', qty: `${jamJars} frascos`, detail: 'Mermelada', icon: Package },
     { name: 'Manteca de Maní (380g)', qty: `${peanutJars} frascos`, detail: '15g diarios', icon: Package },
     { name: 'Brócoli', qty: `${totalBroccoliKg} kg`, detail: '300g diarios', icon: Package },
     { name: 'Papa', qty: `${totalPotatoKg} kg`, detail: '250g por comida (intercambio)', icon: Package },
@@ -53,9 +53,8 @@ export const ShoppingListView = () => {
     { name: 'Omega 3', qty: `${daysInMonth * 2} caps`, detail: '2 caps diarias (mínimo)', icon: Pill },
     { name: 'Vitamina C', qty: `${daysInMonth} comp.`, detail: '500mg diarios', icon: Pill },
     { name: 'Vitamina D3', qty: `${daysInMonth} comp.`, detail: '2000 UI diarias', icon: Pill },
-    { name: 'Magnesio glicinato', qty: `${daysInMonth} dosis`, detail: '300-400mg noche', icon: Pill },
+    { name: 'Magnesio', qty: `${daysInMonth} dosis`, detail: '300-400mg noche', icon: Pill },
     { name: 'Ashwagandha', qty: `${daysInMonth} dosis`, detail: '300-600mg noche', icon: Pill },
-    { name: 'Melatonina', qty: `${daysInMonth} dosis`, detail: '0.5mg noche', icon: Pill },
   ];
 
   return (
